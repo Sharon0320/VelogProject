@@ -7,10 +7,15 @@ app = Flask(__name__)
 
 
 # Perplexity API 정보
-PPLX_API_KEY = "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"
-PPLX_API_URL = "https://api.perplexity.ai/chat/completions"
-VELO_API_URL = "https://v2.velog.io/graphql"
+from dotenv import load_dotenv
+import os
 
+
+load_dotenv()  # .env 파일에서 환경변수 불러오기
+
+PPLX_API_KEY = os.getenv("PPLX_API_KEY")
+PPLX_API_URL = os.getenv("PPLX_API_URL")
+VELO_API_URL = os.getenv("VELO_API_URL")
 
 def remove_references(text):
     """[숫자] 형태의 reference 제거"""
