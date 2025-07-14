@@ -1,18 +1,36 @@
-name: Deploy Next.js to Oracle VM
+name: Build and Push Docker Image
 
 on:
   push:
-    branches:
-      - main
+    branches: [ "main" ]
+
+permissions:
+  contents: read
 
 jobs:
-  deploy:
-    runs-on: ubuntu-latest
+  build-and-docker:
+    runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v3
-      - name: Build Docker image
-        run: docker build -t nextjs-app ./FrontEnd
-      - name: Deploy to Oracle VM
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
         run: |
-          scp -i ${{ secrets.SSH_KEY }} nextjs-app.tar ubuntu@144.24.71.122:~
-          ssh -i ${{ secrets.SSH_KEY }} ubuntu@144.24.71.122 'docker load -i nextjs-app.tar && docker-compose up -d'
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_ACCESS_TOKEN }}
+
+      - name: Build and Push Docker Image
+        run: |
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/velog-front .
+          docker push ${{ secrets.DOCKER_USERNAME }}/velog-front
