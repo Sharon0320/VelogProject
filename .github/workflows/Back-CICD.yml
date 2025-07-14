@@ -30,6 +30,10 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
+      - name: Create .env file
+        run: echo "${{ secrets.BACKEND_ENV }}" > BackEnd/.env
+
+
       - name: Run tests
         run: |
           cd BackEnd
