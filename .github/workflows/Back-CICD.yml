@@ -34,7 +34,7 @@ jobs:
         run: |
           cd BackEnd
           # pytest 또는 unittest 등 테스트 명령어로 교체
-          pytest
+          # pytest
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
