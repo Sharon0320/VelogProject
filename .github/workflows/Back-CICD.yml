@@ -1,0 +1,18 @@
+name: Deploy Next.js to Oracle VM
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Build Docker image
+        run: docker build -t nextjs-app ./FrontEnd
+      - name: Deploy to Oracle VM
+        run: |
+          scp -i ${{ secrets.SSH_KEY }} nextjs-app.tar ubuntu@144.24.71.122:~
+          ssh -i ${{ secrets.SSH_KEY }} ubuntu@144.24.71.122 'docker load -i nextjs-app.tar && docker-compose up -d'
