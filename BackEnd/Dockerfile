@@ -2,6 +2,7 @@ FROM python:3.12
 
 WORKDIR /app
 
+RUN pip install gunicorn
 COPY requirements.txt ./
 
 # 빌드 도구 설치 (Debian/Ubuntu 계열 기준)
