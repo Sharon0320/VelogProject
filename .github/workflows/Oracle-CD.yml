@@ -1,0 +1,23 @@
+name: Deploy to Oracle Cloud VM (self-hosted)
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build-and-deploy:
+    runs-on: self-hosted  # VM에 동작하는 runner
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      # 빌드 및 DockerHub push 스텝 (생략 가능, 이미 앞에서 처리하면)
+      
+      - name: Pull latest images
+        run: |
+          docker-compose pull
+
+      - name: Restart services
+        run: |
+          docker-compose up -d
