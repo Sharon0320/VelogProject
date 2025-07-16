@@ -11,8 +11,6 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
-
-      # 빌드 및 DockerHub push 스텝 (생략 가능, 이미 앞에서 처리하면)
       
       - name: Pull latest images
         working-directory: /home/ubuntu
@@ -22,4 +20,4 @@ jobs:
       - name: Restart services
         working-directory: /home/ubuntu
         run: |
-          docker-compose up -d
+          docker-compose up -d --pull always --force-recreate
