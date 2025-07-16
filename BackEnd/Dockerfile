@@ -19,4 +19,4 @@ COPY .env ./
 
 EXPOSE 5000
 
-CMD ["python", "Velog.py"]
+CMD ["gunicorn", "-w", "4", "-b", "0.0.0.0:8000", "app:app"]
