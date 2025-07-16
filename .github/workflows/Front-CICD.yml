@@ -1,18 +1,52 @@
-name: Deploy Flask to Oracle VM
+name: Frontend CI/CD
 
 on:
   push:
-    branches:
-      - main
+    paths:
+      - 'FrontEnd/**'
+      - '.github/workflows/Front-CICD.yml'
+    branches: [ main ]
+  pull_request:
+    paths:
+      - 'FrontEnd/**'
+      - '.github/workflows/Front-CICD.yml'
 
 jobs:
-  deploy:
+  build-and-push:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v3
-      - name: Build Docker image
-        run: docker build -t flask-app ./BackEnd
-      - name: Deploy to Oracle VM
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
         run: |
-          scp -i ${{ secrets.SSH_KEY }} flask-app.tar ubuntu@144.24.71.122:~
-          ssh -i ${{ secrets.SSH_KEY }} ubuntu@144.24.71.122 'docker load -i flask-app.tar && docker-compose up -d'
+          cd FrontEnd
+          npm install
+
+      - name: Build project
+        run: |
+          cd FrontEnd
+          npm run build
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_ACCESS_TOKEN }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./FrontEnd
+          file: ./FrontEnd/Dockerfile
+          push: true
+          tags: ${{ secrets.DOCKER_USERNAME }}/velog-frontend:latest
