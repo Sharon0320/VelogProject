@@ -12,12 +12,17 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
       
+      - name: Stop and remove old containers
+        working-directory: /home/ubuntu
+        run: |
+          docker-compose down
+
       - name: Pull latest images
         working-directory: /home/ubuntu
         run: |
           docker-compose pull
 
-      - name: Restart services
+      - name: Start services
         working-directory: /home/ubuntu
         run: |
-          docker-compose up -d --pull always --force-recreate
+          docker-compose up -d --force-recreate --remove-orphans
