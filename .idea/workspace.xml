@@ -1,8 +1,94 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
   <component name="ChangeListManager">
     <list default="true" id="8e9eb4a4-c479-49be-ba9d-b23d68589560" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/VelogProject.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/BackEnd/.idea/BackEnd.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/BackEnd/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/BackEnd/.idea/modules.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/BackEnd/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/BackEnd/.idea/workspace.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/BackEnd/README.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/FrontEnd/.next/app-build-manifest.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/FrontEnd/.next/build-manifest.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/FrontEnd/.next/cache/.rscinfo" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/FrontEnd/.next/cache/webpack/client-development/0.pack.gz" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/FrontEnd/.next/cache/webpack/client-development/1.pack.gz" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/FrontEnd/.next/cache/webpack/client-development/2.pack.gz" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/FrontEnd/.next/cache/webpack/client-development/3.pack.gz" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/FrontEnd/.next/cache/webpack/client-development/4.pack.gz" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/FrontEnd/.next/cache/webpack/client-development/5.pack.gz" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/FrontEnd/.next/cache/webpack/client-development/6.pack.gz" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/FrontEnd/.next/cache/webpack/client-development/7.pack.gz" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/FrontEnd/.next/cache/webpack/client-development/index.pack.gz" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/FrontEnd/.next/cache/webpack/client-development/index.pack.gz.old" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/FrontEnd/.next/cache/webpack/server-development/0.pack.gz" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/FrontEnd/.next/cache/webpack/server-development/1.pack.gz" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/FrontEnd/.next/cache/webpack/server-development/2.pack.gz" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/FrontEnd/.next/cache/webpack/server-development/3.pack.gz" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/FrontEnd/.next/cache/webpack/server-development/4.pack.gz" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/FrontEnd/.next/cache/webpack/server-development/5.pack.gz" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/FrontEnd/.next/cache/webpack/server-development/6.pack.gz" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/FrontEnd/.next/cache/webpack/server-development/index.pack.gz" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/FrontEnd/.next/cache/webpack/server-development/index.pack.gz.old" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/FrontEnd/.next/package.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/FrontEnd/.next/react-loadable-manifest.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/FrontEnd/.next/server/app-paths-manifest.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/FrontEnd/.next/server/app/page.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/FrontEnd/.next/server/app/page_client-reference-manifest.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/FrontEnd/.next/server/interception-route-rewrite-manifest.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/FrontEnd/.next/server/middleware-build-manifest.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/FrontEnd/.next/server/middleware-manifest.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/FrontEnd/.next/server/middleware-react-loadable-manifest.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/FrontEnd/.next/server/next-font-manifest.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/FrontEnd/.next/server/next-font-manifest.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/FrontEnd/.next/server/pages-manifest.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/FrontEnd/.next/server/server-reference-manifest.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/FrontEnd/.next/server/server-reference-manifest.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/FrontEnd/.next/server/vendor-chunks/@radix-ui.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/FrontEnd/.next/server/vendor-chunks/@swc.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/FrontEnd/.next/server/vendor-chunks/class-variance-authority.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/FrontEnd/.next/server/vendor-chunks/clsx.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/FrontEnd/.next/server/vendor-chunks/lucide-react.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/FrontEnd/.next/server/vendor-chunks/next.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/FrontEnd/.next/server/vendor-chunks/tailwind-merge.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/FrontEnd/.next/server/webpack-runtime.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/FrontEnd/.next/static/chunks/_app-pages-browser_node_modules_next_dist_client_dev_noop-turbopack-hmr_js.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/FrontEnd/.next/static/chunks/app-pages-internals.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/FrontEnd/.next/static/chunks/app/layout.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/FrontEnd/.next/static/chunks/app/page.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/FrontEnd/.next/static/chunks/main-app.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/FrontEnd/.next/static/chunks/polyfills.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/FrontEnd/.next/static/chunks/webpack.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/FrontEnd/.next/static/css/app/layout.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/FrontEnd/.next/static/development/_buildManifest.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/FrontEnd/.next/static/development/_ssgManifest.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/FrontEnd/.next/static/webpack/633457081244afec._.hot-update.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/FrontEnd/.next/static/webpack/6fee57cb3cee9a2b.webpack.hot-update.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/FrontEnd/.next/static/webpack/app/layout.6fee57cb3cee9a2b.hot-update.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/FrontEnd/.next/static/webpack/webpack.6fee57cb3cee9a2b.hot-update.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/FrontEnd/.next/trace" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/FrontEnd/.next/types/app/layout.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/FrontEnd/.next/types/app/page.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/FrontEnd/.next/types/cache-life.d.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/FrontEnd/.next/types/package.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BackEnd/Velog.py" beforeDir="false" afterPath="$PROJECT_DIR$/BackEnd/Velog.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BackEnd/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/BackEnd/requirements.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrontEnd/app/api/generate-blog/route.ts" beforeDir="false" afterPath="$PROJECT_DIR$/FrontEnd/app/api/generate-blog/route.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/FrontEnd/app/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/FrontEnd/app/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrontEnd/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/FrontEnd/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrontEnd/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/FrontEnd/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/docker-compose.yml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -12,29 +98,35 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "associatedIndex": 0
-}]]></component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 0
+}</component>
   <component name="ProjectId" id="31eOSwD0RASOFN88rqny8ycHGPP" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "main",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/Users/admin/VelogProject/BackEnd",
-    "nodejs_package_manager_path": "npm",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/admin/VelogProject&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-jdk-9f38398b9061-39b83d9b5494-intellij.indexing.shared.core-IU-241.15989.150" />
-        <option value="bundled-js-predefined-1d06a55b98c1-91d5c284f522-JavaScript-IU-241.15989.150" />
+        <option value="bundled-js-predefined-d6986cc7102b-e768b9ed790e-JavaScript-PY-243.21565.199" />
+        <option value="bundled-python-sdk-cab1f2013843-4ae2d6a61b08-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-243.21565.199" />
       </set>
     </attachedChunks>
   </component>
@@ -47,6 +139,8 @@
       <option name="presentableId" value="Default" />
       <updated>1755881074669</updated>
       <workItem from="1755881075714" duration="15000" />
+      <workItem from="1755881127687" duration="679000" />
+      <workItem from="1755882687699" duration="6311000" />
     </task>
     <servers />
   </component>
