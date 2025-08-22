@@ -1,27 +1,50 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
-
-# dependencies
+# Node modules (이미 있음)
 /node_modules
+FrontEnd/node_modules/
 
-# next.js
+
+# Next.js 빌드 결과 (이미 있음)
 /.next/
 /out/
 
-# production
+# Production 빌드 폴더
 /build
 
-# debug
+# 로그 파일
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# env files
+# 환경 변수 파일 (이미 있음)
 .env*
 
-# vercel
+# Vercel 배포 관련 (이미 있음)
 .vercel
 
-# typescript
+# TypeScript 관련 (이미 있음)
 *.tsbuildinfo
 next-env.d.ts
+
+# Windows 파일 시스템에서 자동 생성되는 파일들
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# VSCode 에디터 설정 폴더
+.vscode/
+
+# Windows CRLF 변환 경고 줄이기
+*.js text eol=lf
+
+# OS별 숨김파일/시스템파일
+.DS_Store
+*.bak
+*.tmp
+
+# 환경별 임시 파일들
+*.log
+
+# 시스템별 쉘 히스토리 파일 무시
+*.sh.history
+
