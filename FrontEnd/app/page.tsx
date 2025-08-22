@@ -3,7 +3,7 @@
 import { useState, useRef } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Sparkles, FileText, Loader2, Key, Upload, X, FileImage } from "lucide-react"
+import { Sparkles, FileText, Loader2, Key, Upload, X, File, FileWarning } from "lucide-react" // FileImage -> File로 변경
 import { useToast } from "@/hooks/use-toast"
 import { CookieHelper } from "@/components/cookie-helper"
 
@@ -12,20 +12,22 @@ interface VelogResponse {
   velogResponse?: any
   message?: string
   error?: string
+  title?: string
+  summary?: string
+  body?: string
+  tags?: string[]
 }
 
 interface PDFFile {
   file: File
   name: string
   size: number
-  preview?: string
 }
 
 export default function VelogHelper() {
   const [pdfFile, setPdfFile] = useState<PDFFile | null>(null)
   const [blogPost, setBlogPost] = useState<VelogResponse | null>(null)
-  const [isLoading, setIsLoading] = useState(false)
-  const [isProcessing, setIsProcessing] = useState(false)
+  const [isLoading, setIsLoading] = useState(false) // isProcessing 상태 제거, isLoading으로 통합
   const { toast } = useToast()
   const [velogCookie, setVelogCookie] = useState("")
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -45,10 +47,11 @@ export default function VelogHelper() {
     }
 
     // 파일 크기 검증 (10MB 제한)
-    if (file.size > 10 * 1024 * 1024) {
+    const MAX_FILE_SIZE = 10 * 1024 * 1024
+    if (file.size > MAX_FILE_SIZE) {
       toast({
         title: "파일 크기 초과",
-        description: "파일 크기는 10MB 이하여야 합니다.",
+        description: `파일 크기는 ${formatFileSize(MAX_FILE_SIZE)} 이하여야 합니다.`,
         variant: "destructive",
       })
       return
@@ -91,41 +94,48 @@ export default function VelogHelper() {
       })
       return
     }
-
-    setIsLoading(true)
-    setIsProcessing(true)
     
+    // 블로그 포스팅 상태 초기화
+    setBlogPost(null);
+    setIsLoading(true)
+
     try {
       // FormData를 사용하여 파일 업로드
       const formData = new FormData()
-      formData.append("pdf_file", pdfFile.file)
+      formData.append("pdf", pdfFile.file) // 백엔드와 키 일치!
       formData.append("velog_cookie", velogCookie)
 
-      const response = await fetch("/api/generate-blog", {
+      console.log("FormData 생성 완료, API 요청 시작...")
+
+      const response = await fetch("http://127.0.0.1:5000/post", { // 백엔드 라우트와 일치하도록 수정
         method: "POST",
         body: formData,
       })
 
-      const data = await response.json()
+      console.log("API 응답 상태:", response.status)
 
       if (!response.ok) {
-        throw new Error(data.error || "Failed to post to Velog")
+        const errorData = await response.json()
+        throw new Error(errorData.error || "포스팅에 실패했습니다.")
       }
 
-      if (data.success) {
-        toast({
-          title: "🎉 성공!",
-          description: data.message || "PDF를 분석하여 Velog에 성공적으로 포스팅되었습니다!",
-        })
+      const data = await response.json()
+      console.log("API 응답 데이터:", data)
 
-        setBlogPost({
-          success: true,
-          velogResponse: data.velogResponse,
-          message: data.message,
-        })
-      } else {
-        throw new Error(data.error || "포스팅에 실패했습니다.")
-      }
+      toast({
+        title: "🎉 성공!",
+        description: data.message || "PDF를 분석하여 Velog에 성공적으로 포스팅되었습니다!",
+      })
+
+      setBlogPost({
+        success: true,
+        velogResponse: data, // velog_response 객체를 직접 넘겨줍니다.
+        message: "PDF를 분석하여 Velog에 성공적으로 포스팅되었습니다!", // 응답 객체에 message가 없으면 기본값 사용
+        title: data.title,
+        summary: data.summary,
+        body: data.body,
+        tags: data.tags,
+      })
     } catch (error) {
       console.error("Error:", error)
       toast({
@@ -135,7 +145,6 @@ export default function VelogHelper() {
       })
     } finally {
       setIsLoading(false)
-      setIsProcessing(false)
     }
   }
 
@@ -150,16 +159,18 @@ export default function VelogHelper() {
   const generateMarkdown = () => {
     if (!blogPost) return ""
 
-    return `# ${blogPost.title}
+    const formattedTags = blogPost.tags && blogPost.tags.length > 0 ? blogPost.tags.map((tag: string) => `#${tag}`).join(" ") : ""
 
-${blogPost.content}
+    return `# ${blogPost.title || "제목 없음"}
+
+${blogPost.body || "본문 없음"}
 
 ---
 
 ## 📝 요약
-${blogPost.summary}
+${blogPost.summary || "요약 없음"}
 
-**태그:** ${blogPost.tags.map((tag) => `#${tag}`).join(" ")}`
+**태그:** ${formattedTags || "태그 없음"}`
   }
 
   const formatFileSize = (bytes: number) => {
@@ -213,7 +224,7 @@ ${blogPost.summary}
               <div className="border rounded-lg p-4 bg-gray-50">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <FileImage className="w-8 h-8 text-red-500" />
+                    <File className="w-8 h-8 text-red-500" />
                     <div>
                       <p className="font-medium text-gray-900">{pdfFile.name}</p>
                       <p className="text-sm text-gray-500">{formatFileSize(pdfFile.size)}</p>
@@ -240,7 +251,9 @@ ${blogPost.summary}
               {isLoading ? (
                 <>
                   <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  {isProcessing ? "PDF 분석 중..." : "AI가 글을 작성 중..."}
+                  <span>
+                    {pdfFile ? "PDF 분석 및 포스팅 중..." : "AI가 글을 작성 중..."}
+                  </span>
                 </>
               ) : (
                 <>
@@ -251,6 +264,34 @@ ${blogPost.summary}
             </Button>
           </CardContent>
         </Card>
+
+        {/* Processing Progress */}
+        {isLoading && (
+          <Card className="border-blue-200 bg-blue-50">
+            <CardHeader>
+              <CardTitle className="text-blue-800 flex items-center gap-2">
+                <Loader2 className="w-5 h-5 animate-spin" />
+                처리 중...
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+                  <span className="text-sm text-blue-700">PDF 텍스트 및 이미지 추출 중...</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse animation-delay-500"></div>
+                  <span className="text-sm text-blue-700">AI 블로그 콘텐츠 생성 중...</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse animation-delay-1000"></div>
+                  <span className="text-sm text-blue-700">Velog에 포스팅 중...</span>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Velog Cookie Input Section */}
         <Card>
@@ -289,7 +330,7 @@ ${blogPost.summary}
               <CardHeader>
                 <CardTitle className="text-green-800 flex items-center gap-2">
                   <Sparkles className="w-5 h-5" />
-                  포스팅 완료!
+                  블로그 생성 완료!
                 </CardTitle>
               </CardHeader>
               <CardContent className="text-green-700">
@@ -312,6 +353,81 @@ ${blogPost.summary}
                     </p>
                   </div>
                 )}
+              </CardContent>
+            </Card>
+
+            {/* Generated Blog Content */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-blue-800">📝 생성된 블로그 내용</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {/* Title */}
+                <div>
+                  <h3 className="font-semibold text-gray-700 mb-2">제목</h3>
+                  <div className="p-3 bg-gray-50 rounded-md border">
+                    <p className="text-lg font-medium">{blogPost.title || "제목 없음"}</p>
+                  </div>
+                </div>
+
+                {/* Summary */}
+                <div>
+                  <h3 className="font-semibold text-gray-700 mb-2">요약</h3>
+                  <div className="p-3 bg-gray-50 rounded-md border">
+                    <p className="text-gray-800">{blogPost.summary || "요약 없음"}</p>
+                  </div>
+                </div>
+
+                {/* Body */}
+                <div>
+                  <h3 className="font-semibold text-gray-700 mb-2">본문</h3>
+                  <div className="p-3 bg-gray-50 rounded-md border max-h-96 overflow-y-auto">
+                    <pre className="whitespace-pre-wrap text-sm text-gray-800 font-mono">{blogPost.body || "본문 없음"}</pre>
+                  </div>
+                  <Button
+                    onClick={() => copyToClipboard(blogPost.body || "")}
+                    variant="outline"
+                    size="sm"
+                    className="mt-2"
+                  >
+                    본문 복사
+                  </Button>
+                </div>
+
+                {/* Tags */}
+                <div>
+                  <h3 className="font-semibold text-gray-700 mb-2">태그</h3>
+                  <div className="flex flex-wrap gap-2">
+                    {blogPost.tags && blogPost.tags.length > 0 ? (
+                      blogPost.tags.map((tag, index) => (
+                        <span
+                          key={index}
+                          className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-medium"
+                        >
+                          #{tag}
+                        </span>
+                      ))
+                    ) : (
+                      <p className="text-gray-500">태그 없음</p>
+                    )}
+                  </div>
+                </div>
+
+                {/* Markdown Preview */}
+                <div>
+                  <h3 className="font-semibold text-gray-700 mb-2">마크다운 미리보기</h3>
+                  <div className="p-3 bg-gray-50 rounded-md border max-h-96 overflow-y-auto">
+                    <pre className="whitespace-pre-wrap text-sm text-gray-800 font-mono">{generateMarkdown()}</pre>
+                  </div>
+                  <Button
+                    onClick={() => copyToClipboard(generateMarkdown())}
+                    variant="outline"
+                    size="sm"
+                    className="mt-2"
+                  >
+                    마크다운 복사
+                  </Button>
+                </div>
               </CardContent>
             </Card>
 
