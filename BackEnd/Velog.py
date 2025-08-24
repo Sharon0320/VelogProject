@@ -4,13 +4,14 @@ import tempfile
 import requests
 import base64
 from io import BytesIO
-
-# Import for image size check
+import time
 from PIL import Image
 import fitz
 from flask import Flask, request, jsonify
 from dotenv import load_dotenv
 from openai import OpenAI
+from flask_cors import CORS
+
 
 # --- 환경 변수 및 클라이언트 초기화 ---
 load_dotenv()
@@ -21,11 +22,12 @@ IMGBB_API_KEY = os.getenv("IMGBB_API_KEY")
 
 # Flask 앱 초기화
 app = Flask(__name__)
+CORS(app)
 
 # Upstage LLM을 위한 OpenAI 클라이언트 초기화 (base_url 수정)
 upstage_client = OpenAI(
     api_key=UPSTAGE_API_KEY,
-    base_url="https://api.upstage.ai/v1/"  # base_url에 슬래시 추가
+    base_url="https://api.upstage.ai/v1/"
 )
 
 
@@ -36,36 +38,97 @@ def remove_references(text):
     return re.sub(r'\[\d+\]', '', text)
 
 
-def upload_image_to_imgbb(image_bytes):
-    """imgbb API를 사용해 이미지를 업로드하고 URL을 반환하는 함수"""
+def convert_html_to_text(html_content):
+    """간단한 HTML 태그를 제거하여 텍스트만 추출"""
+    text = re.sub(r'<[^>]+>', '', html_content)
+    text = re.sub(r'\n+', '\n', text).strip()
+    return text
+
+
+def preprocess_image(image_bytes, max_size=(1024, 1024), quality=85):
+    """
+    이미지를 압축하고 크기를 조절하여 업로드에 최적화하는 함수
+    """
+    try:
+        img_io = BytesIO(image_bytes)
+        img = Image.open(img_io)
+
+        # 이미지 크기 조절 (원본 비율 유지)
+        img.thumbnail(max_size, Image.Resampling.LANCZOS)
+
+        # JPEG 형식으로 압축 (용량 감소)
+        output_io = BytesIO()
+        img.save(output_io, format='JPEG', quality=quality)
+        output_io.seek(0)
+        return output_io.read()
+
+    except Exception as e:
+        print(f"이미지 전처리 중 오류 발생: {e}")
+        return image_bytes  # 오류 발생 시 원본 이미지 반환
+
+
+def upload_image_to_imgbb(image_bytes, max_retries=3, initial_delay=2):
+    """
+    imgbb API를 사용해 이미지를 업로드하고 URL을 반환하는 함수 (재시도 로직 추가)
+    """
     url = "https://api.imgbb.com/1/upload"
 
     if not IMGBB_API_KEY:
         print("IMGBB_API_KEY가 .env 파일에 설정되지 않았습니다.")
         return None
 
+    # 이미지 전처리: 크기 조절 및 압축
+    preprocessed_image_bytes = preprocess_image(image_bytes)
+
     # 이미지를 base64로 인코딩
-    encoded_image = base64.b64encode(image_bytes)
+    encoded_image = base64.b64encode(preprocessed_image_bytes)
 
     payload = {
         "key": IMGBB_API_KEY,
         "image": encoded_image
     }
 
-    try:
-        response = requests.post(url, data=payload)
-        response_data = response.json()
+    retries = 0
+    delay = initial_delay
 
-        if response.status_code == 200 and response_data.get("success"):
-            image_url = response_data["data"]["url"]
-            print(f"imgbb upload success: {image_url}")
-            return image_url
-        else:
-            print(f"imgbb 업로드 실패: {response.status_code} - {response.text}")
+    while retries < max_retries:
+        try:
+            response = requests.post(url, data=payload, timeout=30)
+
+            if response.status_code == 200:
+                response_data = response.json()
+                if response_data.get("success"):
+                    image_url = response_data["data"]["url"]
+                    print(f"imgbb upload success: {image_url}")
+                    return image_url
+                else:
+                    print(f"imgbb 업로드 실패: {response.text}")
+                    return None
+            elif response.status_code == 504:
+                retries += 1
+                print(f"ImgBB 504 오류 발생, {retries}/{max_retries} 재시도 중... 대기 시간: {delay}초")
+                time.sleep(delay)
+                delay *= 2
+                continue
+            else:
+                print(f"imgbb 업로드 실패: HTTP 상태 코드 {response.status_code}")
+                print(f"응답 본문: {response.text}")
+                return None
+        except requests.exceptions.Timeout:
+            retries += 1
+            print(f"요청 타임아웃 발생, {retries}/{max_retries} 재시도 중... 대기 시간: {delay}초")
+            time.sleep(delay)
+            delay *= 2
+            continue
+        except requests.exceptions.RequestException as e:
+            print(f"imgbb 요청 중 예외 발생: {e}")
             return None
-    except Exception as e:
-        print(f"imgbb 업로드 중 예외 발생: {e}")
-        return None
+        except Exception as e:
+            print(f"imgbb 업로드 중 예외 발생: {e}")
+            return None
+
+    print(f"최대 재시도 횟수({max_retries}회) 초과. ImgBB 업로드 실패.")
+    return None
 
 
 def extract_text_from_image_upstage(image_bytes):
@@ -74,7 +137,6 @@ def extract_text_from_image_upstage(image_bytes):
     """
     url = "https://api.upstage.ai/v1/document-digitization"
     headers = {'Authorization': f'Bearer {UPSTAGE_API_KEY}'}
-    # 파일을 multipart/form-data 형식으로 전송
     files = {"document": ("image.jpg", image_bytes, "image/jpeg")}
     data = {"model": "ocr"}
     response = requests.post(url, headers=headers, files=files, data=data)
@@ -91,54 +153,73 @@ def extract_text_from_image_upstage(image_bytes):
 def process_pdf(pdf_path):
     """
     PDF 파일에서 텍스트와 이미지를 추출하고, 이미지는 OCR 및 업로드를 수행하는 함수
-    (작은 이미지 필터링 기능 추가)
+    (document-parse API로 텍스트 추출, 이미지 필터링 로직 제거)
     """
-    doc = fitz.open(pdf_path)
     full_content = ""
     image_details = {}
     image_counter = 1
+    doc = None
 
-    for page_num in range(len(doc)):
-        page = doc.load_page(page_num)
-        full_content += page.get_text("text") + "\n\n"
+    print("--- 1. document-parse API로 텍스트 추출 시작 ---")
+    try:
+        with open(pdf_path, "rb") as f:
+            pdf_bytes = f.read()
 
-        # 페이지의 너비와 높이 가져오기
-        page_width = page.rect.width
-        page_height = page.rect.height
+        url = "https://api.upstage.ai/v1/document-ai/document-parse"
+        headers = {'Authorization': f'Bearer {UPSTAGE_API_KEY}'}
+        files = {"document": ("document.pdf", pdf_bytes, "application/pdf")}
+        data = {"base64_encoding": "['table']", "model": "document-parse"}
 
-        image_list = page.get_images(full=True)
-        for img_index, img in enumerate(image_list):
-            xref = img[0]
-            base_image = doc.extract_image(xref)
-            image_bytes = base_image["image"]
+        response = requests.post(url, headers=headers, files=files, data=data)
+        response.raise_for_status()
 
-            # 이미지 크기 필터링: 가로/세로 100px 미만 또는 페이지 너비의 10% 미만 이미지는 무시
-            try:
-                from PIL import Image
-                from io import BytesIO
-                img_io = BytesIO(image_bytes)
-                image_obj = Image.open(img_io)
-                width, height = image_obj.size
+        result = response.json()
+        html_text = result.get("content", {}).get("html", "")
+        full_content = convert_html_to_text(html_text)
+        print("document-parse API로 텍스트 추출 성공")
+        print("--- 추출된 전체 텍스트 (일부) ---")
+        print(full_content[:500] + "...")  # 추출된 텍스트의 앞부분을 로그로 출력
+        print("-----------------------------------")
 
-                # 페이지 너비의 10%를 기준으로 필터링
-                min_size_threshold = max(100, page_width * 0.1)
+    except requests.exceptions.RequestException as e:
+        print(f"document-parse API 요청 실패: {e}")
+        full_content = "텍스트 추출 실패"
 
-                if width < min_size_threshold or height < min_size_threshold:
-                    print(f"이미지 {page_num + 1}-{img_index + 1}는 크기가 작아 (W:{width}, H:{height}) 건너뜁니다.")
-                    continue
-            except Exception as e:
-                print(f"이미지 크기 확인 중 오류 발생: {e}")
-                # 오류 발생 시 일단 통과시켜 OCR/업로드 진행
+    print("\n--- 2. PDF 이미지 추출 및 처리 시작 ---")
+    try:
+        doc = fitz.open(pdf_path)
+        for page_num in range(len(doc)):
+            page = doc.load_page(page_num)
+            image_list = page.get_images(full=True)
+            print(f"페이지 {page_num + 1}에서 {len(image_list)}개의 이미지 발견.")
 
-            ocr_text = extract_text_from_image_upstage(image_bytes)
-            image_url = upload_image_to_imgbb(image_bytes)
+            for img_index, img in enumerate(image_list):
+                xref = img[0]
+                base_image = doc.extract_image(xref)
+                image_bytes = base_image["image"]
 
-            if image_url:
-                placeholder = f"\n--- 이미지 {image_counter} 시작 ---\n[설명: {ocr_text}]\n--- 이미지 {image_counter} 끝 ---\n"
-                full_content += placeholder
-                alt_text = ocr_text.splitlines()[0] if ocr_text else f'Image {image_counter}'
-                image_details[f"[IMAGE_{image_counter}]"] = f"![{alt_text}]({image_url})"
-                image_counter += 1
+                print(f"  > 이미지 {img_index + 1} OCR 및 ImgBB 업로드 진행...")
+                ocr_text = extract_text_from_image_upstage(image_bytes)
+                image_url = upload_image_to_imgbb(image_bytes)
+
+                if image_url:
+                    placeholder = f"\n--- 이미지 {image_counter} 시작 ---\n[설명: {ocr_text}]\n--- 이미지 {image_counter} 끝 ---\n"
+                    full_content += placeholder
+                    alt_text = ocr_text.splitlines()[0] if ocr_text else f'Image {image_counter}'
+                    image_details[f"[IMAGE_{image_counter}]"] = f"![{alt_text}]({image_url})"
+                    image_counter += 1
+                else:
+                    print(f"  > 이미지 {img_index + 1} 처리 실패 (URL 없음).")
+    except Exception as e:
+        print(f"PDF 이미지 처리 중 오류 발생: {e}")
+    finally:
+        if doc:
+            doc.close()
+
+    print("\n--- PDF 처리 최종 결과 ---")
+    print(f"최종 처리된 전체 텍스트 (일부): {full_content[:500]}...")
+    print(f"이미지 상세 정보: {image_details}")
+    print("----------------------------")
 
     return full_content, image_details
 
@@ -161,7 +242,7 @@ def get_summary_title_body_tags(processed_text):
 제목: SEO를 고려하여 사람들의 흥미를 끌 만한 기술 블로그 제목을 추천해줘.
 요약: 전체 내용을 대표할 수 있는 핵심 내용 3문장으로 요약해줘.
 본문: 원본 텍스트와 이미지 OCR 결과를 바탕으로, 교수님께 칭찬받을 만한 상세하고 깊이 있는 기술 블로그 본문을 작성해줘. 문제 해결 과정을 다루는 트러블슈팅 형식이라면 더욱 좋아. 특히, 내용의 흐름에 맞게 이미지가 들어갈 가장 적절한 위치에 '[IMAGE_1]', '[IMAGE_2]'와 같은 플레이스홀더를 반드시 삽입해줘.
-태그: 이 글의 핵심 키워드를 쉼표(,)로 구분된 태그로 만들어줘.
+태그: 이 글의 핵심 키워드를 쉼표(,)로 구분된 태그로 만들어줘. 문장 말고 쓰인 기술과 해결방법 위주로
 
 [원본 텍스트]
 {processed_text}
@@ -180,53 +261,59 @@ def get_summary_title_body_tags(processed_text):
         print(f"Upstage Solar API 오류: {e}")
         raise Exception(f"Upstage Solar API 오류: {e}")
 
-    # 멀티라인 본문 파싱 (안정적인 로직)
-    title, summary, full_body, tags_line = "제목없음", "요약없음", "", ""
-    lines = result.split('\n')
-    in_body = False
+    # **수정된 파싱 로직**
+    title, summary, body, tags_line = "", "", "", ""
+    current_section = None
 
+    lines = result.split('\n')
     for line in lines:
         stripped_line = line.strip()
         if not stripped_line:
             continue
 
-        # '제목:' 키워드를 포함하는 줄을 찾음
-        title_match = re.search(r'제목:', stripped_line)
-        if title_match:
-            title = stripped_line[title_match.end():].strip()
-            in_body = False
-            continue
+        # 선행하는 마크다운 헤더(#)를 제거하여 파싱 유연성 확보
+        stripped_line = re.sub(r'^#+\s*', '', stripped_line)
 
-        # '요약:' 키워드를 포함하는 줄을 찾음
-        summary_match = re.search(r'요약:', stripped_line)
-        if summary_match:
-            summary = stripped_line[summary_match.end():].strip()
-            in_body = False
-            continue
+        # 각 섹션의 시작을 감지하고 모드를 변경
+        if stripped_line.startswith('제목:'):
+            current_section = 'title'
+            line_content = stripped_line[len('제목:'):].strip()
+        elif stripped_line.startswith('요약:'):
+            current_section = 'summary'
+            line_content = stripped_line[len('요약:'):].strip()
+        elif stripped_line.startswith('본문:'):
+            current_section = 'body'
+            line_content = stripped_line[len('본문:'):].strip()
+        elif stripped_line.startswith('태그:'):
+            current_section = 'tags'
+            line_content = stripped_line[len('태그:'):].strip()
+        else:
+            # 섹션 키워드가 없는 줄은 현재 섹션에 추가
+            line_content = stripped_line
 
-        # '본문:' 키워드를 포함하는 줄을 찾음
-        body_match = re.search(r'본문:', stripped_line)
-        if body_match:
-            in_body = True
-            full_body = stripped_line[body_match.end():].strip()
-            continue
+        # 현재 섹션에 내용 추가
+        if current_section == 'title':
+            title += line_content
+        elif current_section == 'summary':
+            if summary:
+                summary += "\n" + line_content
+            else:
+                summary = line_content
+        elif current_section == 'body':
+            if body:
+                body += "\n" + line_content
+            else:
+                body = line_content
+        elif current_section == 'tags':
+            if tags_line:
+                tags_line += ", " + line_content
+            else:
+                tags_line = line_content
 
-        # '태그:' 키워드를 포함하는 줄을 찾음
-        tags_match = re.search(r'태그:', stripped_line)
-        if tags_match:
-            tags_line = stripped_line[tags_match.end():].strip()
-            in_body = False
-            continue
+    full_body = remove_references(body)
+    tags = [tag.strip().replace('#', '') for tag in tags_line.split(",") if tag.strip()]
+    summary = summary.strip()
 
-        # '본문' 섹션 내부에 있는 줄들을 추가
-        if in_body:
-            full_body += "\n" + stripped_line
-
-    # reference 제거
-    full_body = remove_references(full_body)
-    tags = [tag.strip() for tag in tags_line.split(",") if tag.strip()]
-
-    # 결과가 비어있는 경우 기본값 설정
     if not title:
         title = "제목없음"
     if not summary:
@@ -234,8 +321,12 @@ def get_summary_title_body_tags(processed_text):
     if not full_body:
         full_body = "내용없음"
 
-    # 디버깅을 위한 파싱 결과 출력
-    print(f"파싱 결과: 제목='{title}', 요약='{summary}', 태그='{tags}', 본문 첫 100자='{full_body[:100]}...'")
+    print("\n--- LLM 응답 파싱 결과 ---")
+    print(f"파싱 결과: 제목='{title}'")
+    print(f"파싱 결과: 요약='{summary}'")
+    print(f"파싱 결과: 태그='{tags}'")
+    print(f"파싱 결과: 본문 길이={len(full_body)}")
+    print("------------------------")
 
     return title, summary, full_body, tags
 
@@ -245,9 +336,7 @@ def post_to_velog(title, body, tags, summary, velog_cookie):
     생성된 콘텐츠를 Velog에 포스팅하는 함수
     """
     headers = {"Content-Type": "application/json", "Cookie": velog_cookie}
-    # 제목에서 유효한 URL slug 생성
     url_slug = re.sub(r'[^\w\s-]', '', title).strip().lower().replace(" ", "-")
-    # 제목이 비어있을 경우 대체 slug 생성
     if not url_slug:
         import uuid
         url_slug = f"untitled-post-{uuid.uuid4().hex[:8]}"
@@ -284,7 +373,6 @@ def post_to_velog(title, body, tags, summary, velog_cookie):
 @app.route("/post", methods=["POST"])
 def post_from_pdf():
     try:
-        # 파일이 multipart/form-data로 전송되었는지 확인
         if 'pdf' not in request.files:
             return jsonify({"error": "PDF 파일이 필요합니다."}), 400
 
@@ -294,18 +382,20 @@ def post_from_pdf():
         if not velog_cookie:
             return jsonify({"error": "velog_cookie가 필요합니다."}), 400
 
-        # ... (이하 코드는 변경 없음)
         with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as temp_pdf:
             pdf_file.save(temp_pdf.name)
             temp_pdf_path = temp_pdf.name
 
-        print("PDF 처리 시작...")
+        print("\n=== 전체 프로세스 시작 ===")
+        print(f"임시 파일 경로: {temp_pdf_path}")
+
         processed_text, image_details = process_pdf(temp_pdf_path)
-        print("PDF 처리 완료.")
 
+        print("\n--- 임시 파일 삭제 ---")
         os.unlink(temp_pdf_path)
+        print("임시 파일 삭제 완료.")
 
-        print("블로그 콘텐츠 생성 시작 (Upstage Solar)...")
+        print("\n=== 블로그 콘텐츠 생성 시작 (Upstage Solar) ===")
         title, summary, body_with_placeholders, tags = get_summary_title_body_tags(processed_text)
         print("블로그 콘텐츠 생성 완료.")
 
@@ -313,11 +403,16 @@ def post_from_pdf():
         for placeholder, markdown_img in image_details.items():
             final_body = final_body.replace(placeholder, markdown_img)
 
-        print("Velog 포스팅 시작...")
+        print("\n--- 최종 본문 내용 (이미지 포함) ---")
+        print(final_body[:500] + "...")  # 최종 본문 내용의 앞부분을 로그로 출력
+        print("--------------------------------------")
+
+        print("\n=== Velog 포스팅 시작 ===")
         result = post_to_velog(title, final_body, tags, summary, velog_cookie)
         print("Velog 포스팅 완료.")
 
-        # 포스팅 성공 시, 프론트엔드로 제목, 요약, 본문, 태그를 함께 반환
+        print("\n=== 전체 프로세스 성공 ===")
+
         return jsonify({
             "success": True,
             "message": "PDF를 분석하여 Velog에 성공적으로 포스팅되었습니다!",
@@ -329,7 +424,8 @@ def post_from_pdf():
         }), 200
 
     except Exception as e:
-        print(f"전체 프로세스 에러: {e}")
+        print(f"\n=== 전체 프로세스 에러 발생 ===")
+        print(f"에러 내용: {e}")
         return jsonify({"error": str(e)}), 500
 
 

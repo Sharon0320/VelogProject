@@ -4,91 +4,28 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8e9eb4a4-c479-49be-ba9d-b23d68589560" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/VelogProject.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/BackEnd/.idea/BackEnd.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/BackEnd/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/BackEnd/.idea/modules.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/BackEnd/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/BackEnd/.idea/workspace.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/BackEnd/README.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/FrontEnd/.next/app-build-manifest.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/FrontEnd/.next/build-manifest.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/FrontEnd/.next/cache/.rscinfo" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/FrontEnd/.next/cache/webpack/client-development/0.pack.gz" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/FrontEnd/.next/cache/webpack/client-development/1.pack.gz" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/FrontEnd/.next/cache/webpack/client-development/2.pack.gz" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/FrontEnd/.next/cache/webpack/client-development/3.pack.gz" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/FrontEnd/.next/cache/webpack/client-development/4.pack.gz" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/FrontEnd/.next/cache/webpack/client-development/5.pack.gz" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/FrontEnd/.next/cache/webpack/client-development/6.pack.gz" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/FrontEnd/.next/cache/webpack/client-development/7.pack.gz" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/FrontEnd/.next/cache/webpack/client-development/index.pack.gz" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/FrontEnd/.next/cache/webpack/client-development/index.pack.gz.old" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/FrontEnd/.next/cache/webpack/server-development/0.pack.gz" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/FrontEnd/.next/cache/webpack/server-development/1.pack.gz" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/FrontEnd/.next/cache/webpack/server-development/2.pack.gz" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/FrontEnd/.next/cache/webpack/server-development/3.pack.gz" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/FrontEnd/.next/cache/webpack/server-development/4.pack.gz" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/FrontEnd/.next/cache/webpack/server-development/5.pack.gz" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/FrontEnd/.next/cache/webpack/server-development/6.pack.gz" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/FrontEnd/.next/cache/webpack/server-development/index.pack.gz" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/FrontEnd/.next/cache/webpack/server-development/index.pack.gz.old" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/FrontEnd/.next/package.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/FrontEnd/.next/react-loadable-manifest.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/FrontEnd/.next/server/app-paths-manifest.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/FrontEnd/.next/server/app/page.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/FrontEnd/.next/server/app/page_client-reference-manifest.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/FrontEnd/.next/server/interception-route-rewrite-manifest.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/FrontEnd/.next/server/middleware-build-manifest.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/FrontEnd/.next/server/middleware-manifest.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/FrontEnd/.next/server/middleware-react-loadable-manifest.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/FrontEnd/.next/server/next-font-manifest.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/FrontEnd/.next/server/next-font-manifest.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/FrontEnd/.next/server/pages-manifest.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/FrontEnd/.next/server/server-reference-manifest.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/FrontEnd/.next/server/server-reference-manifest.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/FrontEnd/.next/server/vendor-chunks/@radix-ui.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/FrontEnd/.next/server/vendor-chunks/@swc.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/FrontEnd/.next/server/vendor-chunks/class-variance-authority.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/FrontEnd/.next/server/vendor-chunks/clsx.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/FrontEnd/.next/server/vendor-chunks/lucide-react.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/FrontEnd/.next/server/vendor-chunks/next.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/FrontEnd/.next/server/vendor-chunks/tailwind-merge.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/FrontEnd/.next/server/webpack-runtime.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/FrontEnd/.next/static/chunks/_app-pages-browser_node_modules_next_dist_client_dev_noop-turbopack-hmr_js.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/FrontEnd/.next/static/chunks/app-pages-internals.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/FrontEnd/.next/static/chunks/app/layout.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/FrontEnd/.next/static/chunks/app/page.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/FrontEnd/.next/static/chunks/main-app.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/FrontEnd/.next/static/chunks/polyfills.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/FrontEnd/.next/static/chunks/webpack.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/FrontEnd/.next/static/css/app/layout.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/FrontEnd/.next/static/development/_buildManifest.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/FrontEnd/.next/static/development/_ssgManifest.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/FrontEnd/.next/static/webpack/633457081244afec._.hot-update.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/FrontEnd/.next/static/webpack/6fee57cb3cee9a2b.webpack.hot-update.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/FrontEnd/.next/static/webpack/app/layout.6fee57cb3cee9a2b.hot-update.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/FrontEnd/.next/static/webpack/webpack.6fee57cb3cee9a2b.hot-update.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/FrontEnd/.next/trace" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/FrontEnd/.next/types/app/layout.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/FrontEnd/.next/types/app/page.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/FrontEnd/.next/types/cache-life.d.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/FrontEnd/.next/types/package.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+    <list default="true" id="8e9eb4a4-c479-49be-ba9d-b23d68589560" name="Changes" comment="&quot;[Feat] 백 프론트 PDF 추출 파이프라인 및 UPSTAGE API migration&quot;&#10;&#10;1. 이미지 크기 필터링 로직 개선&#10;2. Upstage Solar API 응답 파싱 로직 개선">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BackEnd/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/BackEnd/Dockerfile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BackEnd/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/BackEnd/README.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/BackEnd/Velog.py" beforeDir="false" afterPath="$PROJECT_DIR$/BackEnd/Velog.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/BackEnd/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/BackEnd/requirements.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/FrontEnd/app/api/generate-blog/route.ts" beforeDir="false" afterPath="$PROJECT_DIR$/FrontEnd/app/api/generate-blog/route.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/FrontEnd/app/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/FrontEnd/app/page.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/FrontEnd/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/FrontEnd/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/FrontEnd/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/FrontEnd/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/docker-compose.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrontEnd/.next/cache/webpack/client-development/3.pack.gz" beforeDir="false" afterPath="$PROJECT_DIR$/FrontEnd/.next/cache/webpack/client-development/3.pack.gz" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrontEnd/.next/cache/webpack/client-development/6.pack.gz" beforeDir="false" afterPath="$PROJECT_DIR$/FrontEnd/.next/cache/webpack/client-development/6.pack.gz" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrontEnd/.next/cache/webpack/client-development/7.pack.gz" beforeDir="false" afterPath="$PROJECT_DIR$/FrontEnd/.next/cache/webpack/client-development/7.pack.gz" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrontEnd/.next/cache/webpack/client-development/index.pack.gz" beforeDir="false" afterPath="$PROJECT_DIR$/FrontEnd/.next/cache/webpack/client-development/index.pack.gz" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrontEnd/.next/cache/webpack/client-development/index.pack.gz.old" beforeDir="false" afterPath="$PROJECT_DIR$/FrontEnd/.next/cache/webpack/client-development/index.pack.gz.old" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrontEnd/.next/cache/webpack/server-development/2.pack.gz" beforeDir="false" afterPath="$PROJECT_DIR$/FrontEnd/.next/cache/webpack/server-development/2.pack.gz" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrontEnd/.next/cache/webpack/server-development/6.pack.gz" beforeDir="false" afterPath="$PROJECT_DIR$/FrontEnd/.next/cache/webpack/server-development/6.pack.gz" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrontEnd/.next/cache/webpack/server-development/index.pack.gz" beforeDir="false" afterPath="$PROJECT_DIR$/FrontEnd/.next/cache/webpack/server-development/index.pack.gz" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrontEnd/.next/cache/webpack/server-development/index.pack.gz.old" beforeDir="false" afterPath="$PROJECT_DIR$/FrontEnd/.next/cache/webpack/server-development/index.pack.gz.old" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrontEnd/.next/static/chunks/app/layout.js" beforeDir="false" afterPath="$PROJECT_DIR$/FrontEnd/.next/static/chunks/app/layout.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrontEnd/.next/static/chunks/webpack.js" beforeDir="false" afterPath="$PROJECT_DIR$/FrontEnd/.next/static/chunks/webpack.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrontEnd/.next/static/webpack/6fee57cb3cee9a2b.webpack.hot-update.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrontEnd/.next/static/webpack/app/layout.6fee57cb3cee9a2b.hot-update.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrontEnd/.next/static/webpack/webpack.6fee57cb3cee9a2b.hot-update.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/FrontEnd/.next/trace" beforeDir="false" afterPath="$PROJECT_DIR$/FrontEnd/.next/trace" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -98,6 +35,18 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;Sharon0320&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/Sharon0320/VelogProject.git&quot;,
+    &quot;accountId&quot;: &quot;4bbac1ab-dec0-44b9-bdf8-a6456fb29acf&quot;
+  }
+}</component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 0
 }</component>
@@ -140,11 +89,25 @@
       <updated>1755881074669</updated>
       <workItem from="1755881075714" duration="15000" />
       <workItem from="1755881127687" duration="679000" />
-      <workItem from="1755882687699" duration="6311000" />
+      <workItem from="1755882687699" duration="24852000" />
+      <workItem from="1756032535411" duration="320000" />
     </task>
+    <task id="LOCAL-00001" summary="&quot;[Feat] 백 프론트 PDF 추출 파이프라인 및 UPSTAGE API migration&quot;&#10;&#10;1. 이미지 크기 필터링 로직 개선&#10;2. Upstage Solar API 응답 파싱 로직 개선">
+      <option name="closed" value="true" />
+      <created>1755891545871</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1755891545871</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="&quot;[Feat] 백 프론트 PDF 추출 파이프라인 및 UPSTAGE API migration&quot;&#10;&#10;1. 이미지 크기 필터링 로직 개선&#10;2. Upstage Solar API 응답 파싱 로직 개선" />
+    <option name="LAST_COMMIT_MESSAGE" value="&quot;[Feat] 백 프론트 PDF 추출 파이프라인 및 UPSTAGE API migration&quot;&#10;&#10;1. 이미지 크기 필터링 로직 개선&#10;2. Upstage Solar API 응답 파싱 로직 개선" />
   </component>
 </project>
