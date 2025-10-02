@@ -1,12 +1,11 @@
 # ✨ Velog AI 블로그 생성기
 
-OpenAI나 Perplexity에서 대화한 내용을 PDF로 추출하여 AI가 분석하고, 이미지와 함께 기술블로그를 자동으로 생성하여 Velog에 포스팅하는 도구입니다.
+대화 내용을 PDF로 업로드하면 백엔드가 텍스트를 추출하고, LLM이 기술 블로그 글(제목/요약/본문/태그)을 생성해 Velog에 자동 포스팅하는 도구입니다.
 
 ## 🚀 주요 기능
 
-- **PDF 업로드**: OpenAI/Perplexity 대화 내용 PDF 파일 업로드
-- **AI 분석**: Perplexity Solar Pro 2를 통한 대화 내용 분석
-- **이미지 처리**: PDF에서 이미지 추출 및 Upstage OCR 분석
+- **PDF 업로드**: 대화 내용 PDF 파일 업로드
+- **AI 분석**: Upstage Document Parse로 텍스트 추출, Solar Pro 2로 콘텐츠 생성
 - **자동 블로그 생성**: 제목, 요약, 본문, 태그 자동 생성
 - **Velog 연동**: 생성된 블로그를 Velog에 자동 포스팅
 
@@ -30,14 +29,13 @@ Frontend (Next.js) ←→ Backend (Flask) ←→ External APIs
 - **Radix UI** (접근성 고려)
 
 ### Backend
-- **Flask 3.0.3** (Python)
-- **PyPDF2** + **pdfplumber** (PDF 처리)
-- **OpenCV** + **Pillow** (이미지 처리)
-- **pdf2image** (PDF → 이미지 변환)
+- **Flask 3** (Python)
+- **Upstage Document AI (document-parse)** for 텍스트 추출
+- **Upstage Solar Pro 2** for LLM 생성
 
-### AI & OCR
-- **Perplexity Solar Pro 2** (블로그 생성)
-- **Upstage OCR** (이미지 텍스트 분석)
+### AI
+- **Upstage Solar Pro 2** (블로그 생성)
+- **Upstage Document Parse** (텍스트 추출)
 
 ### Infrastructure
 - **Docker** + **Docker Compose**
@@ -53,12 +51,8 @@ cd VelogProject
 
 ### 2. 환경변수 설정
 ```bash
-# BackEnd/.env 파일 생성
-cp BackEnd/.env.example BackEnd/.env
-
-# 필요한 API 키 설정
-PPLX_API_KEY=your_perplexity_api_key
-UPSTAGE_OCR_API_KEY=your_upstage_ocr_api_key
+# BackEnd/.env 생성 후 아래 값 설정
+UPSTAGE_API_KEY=your_upstage_api_key
 VELO_API_URL=https://v2.velog.io/graphql
 ```
 
@@ -77,7 +71,10 @@ docker-compose up --build
 ```bash
 cd BackEnd
 pip install -r requirements.txt
-python Velog.py
+# 두 방법 중 하나로 실행
+python Velog.py          # 진입점 (내부에서 VelogApp 실행)
+# 또는
+python velog_app.py      # 직접 VelogApp 실행
 ```
 
 ### Frontend 개발
@@ -99,16 +96,14 @@ npm run dev
 - PDF 파일 업로드 (최대 10MB)
 
 ### 3. AI 분석 및 생성
-- PDF 텍스트 추출
-- 이미지 분석 및 OCR
-- AI 블로그 생성
+- PDF 텍스트 추출 (Upstage Document Parse)
+- AI 블로그 생성 (Upstage Solar Pro 2)
 - Velog 자동 포스팅
 
 ## 🔍 API 엔드포인트
 
 ### Backend
-- `POST /post`: PDF 업로드 및 블로그 생성
-- `GET /health`: 서비스 상태 확인
+- `POST /post`: PDF 업로드 및 블로그 생성/포스팅
 
 ### Frontend
 - `POST /api/generate-blog`: PDF 처리 요청
@@ -123,7 +118,11 @@ VelogProject/
 │   ├── hooks/              # 커스텀 훅
 │   └── public/             # 정적 파일
 ├── BackEnd/                 # Flask 백엔드
-│   ├── Velog.py            # 메인 애플리케이션
+│   ├── Velog.py            # 진입점 (VelogApp 실행)
+│   ├── velog_app.py        # 메인 애플리케이션 클래스(Flask 라우팅)
+│   ├── pdf_processor.py    # PDF 텍스트 추출 (Upstage Document Parse)
+│   ├── blog_content_generator.py # LLM 콘텐츠 생성 (Solar Pro 2)
+│   ├── velog_api.py        # Velog 포스팅 모듈
 │   ├── requirements.txt    # Python 의존성
 │   ├── Dockerfile          # Docker 설정
 │   └── uploads/            # 임시 파일 저장소
@@ -136,7 +135,7 @@ VelogProject/
 - **파일 크기**: PDF 최대 10MB
 - **파일 형식**: PDF만 지원
 - **보안**: 업로드된 파일은 처리 후 자동 삭제
-- **API 키**: Perplexity, Upstage OCR API 키 필요
+- **API 키**: Upstage API 키 필요
 - **Velog 인증**: 유효한 쿠키 필요
 
 ## 🤝 기여하기
