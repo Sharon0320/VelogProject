@@ -48,3 +48,8 @@ Desktop.ini
 # 시스템별 쉘 히스토리 파일 무시
 *.sh.history
 
+# Kiro
+.kiro/
+
+# .idea (다른 사용자의 환경에 영향을 주지 않기 위하여)
+.idea/
