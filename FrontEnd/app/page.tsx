@@ -181,6 +181,40 @@ ${blogPost.summary || "요약 없음"}
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i]
   }
 
+  const syncEmbeddings = async () => {
+    try {
+      const response = await fetch("http://127.0.0.1:5000/sync-embeddings", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          velog_cookie: velogCookie,
+          documents: blogPost?.body
+            ? [
+                {
+                  post_id: blogPost?.velogResponse?.data?.writePost?.id || "temp",
+                  content: `${blogPost?.title || ""}\n\n${blogPost?.body || ""}`.slice(0, 8000),
+                },
+              ]
+            : [],
+        }),
+      })
+
+      if (!response.ok) {
+        const err = await response.json().catch(() => ({}))
+        throw new Error(err.error || `동기화 실패 (${response.status})`)
+      }
+
+      const data = await response.json()
+      toast({ title: "동기화 완료", description: data.message || "벡터 DB 동기화 완료" })
+    } catch (e) {
+      toast({
+        title: "동기화 오류",
+        description: e instanceof Error ? e.message : "알 수 없는 오류",
+        variant: "destructive",
+      })
+    }
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
       <div className="max-w-4xl mx-auto space-y-6">
@@ -261,6 +295,14 @@ ${blogPost.summary || "요약 없음"}
                   PDF 분석하여 블로그 생성하기
                 </>
               )}
+            </Button>
+            <Button
+              onClick={syncEmbeddings}
+              variant="outline"
+              className="w-full"
+              disabled={isLoading || !velogCookie.trim()}
+            >
+              벡터 DB 동기화
             </Button>
           </CardContent>
         </Card>

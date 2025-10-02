@@ -1,5 +1,5 @@
 import re
-from typing import Tuple, List
+from typing import Tuple, List, Optional
 from openai import OpenAI
 
 
@@ -16,11 +16,21 @@ class BlogContentGenerator:
         """[숫자] 형태의 참조(reference) 제거"""
         return re.sub(r'\[\d+\]', '', text)
     
-    def get_summary_title_body_tags(self, processed_text: str) -> Tuple[str, str, str, List[str]]:
+    def get_summary_title_body_tags(self, processed_text: str, personalization_context: Optional[str] = None) -> Tuple[str, str, str, List[str]]:
         """
         Upstage Solar API를 사용해 블로그 콘텐츠를 생성하는 메서드
         (안정적인 파싱 로직 적용)
         """
+        personalization_block = ""
+        if personalization_context:
+            personalization_block = f"""
+[사용자 개인화 컨텍스트]
+아래 내용은 사용자의 평소 말투/작성 스타일과 대표 포스트의 일부입니다. 글을 생성할 때 톤과 구성, 시그니처 표현을 적절히 반영하세요. 그대로 복붙하지 말고, 과적합 없이 자연스럽게 녹여주세요.
+---
+{personalization_context[:2000]}
+---
+"""
+
         prompt = f"""
 아래의 원본 텍스트를 분석하여, 독자들이 이해하기 쉬운 전문가 수준의 기술 블로그 포스트를 마크다운 형식으로 가독성 좋게 작성해주세요. 
 아래 각 항목의 지시에 따라 정확하게 결과물을 생성해주세요. 각 항목은 반드시 한 줄로 시작해야 합니다.
@@ -33,6 +43,11 @@ class BlogContentGenerator:
 요약: 전체 내용을 대표할 수 있는 핵심 내용 3문장으로 요약해줘.
 본문: 원본 텍스트 바탕으로, 기술 블로그 본문을 작성해줘. 다음과 같은 조건이 있어. 간결하고 이해하기 쉽게 한 문단 하나의 메시지. LLM 대답처럼 딱딱하지 않게 독자에게 스토리텔링하는 식으로 전달. 이모티콘 활용해도 돼.
 태그: 이 글의 핵심 키워드를 쉼표(,)로 구분된 태그로 만들어줘. 문장 말고 쓰인 기술과 해결방법 위주로 최대 10개까지.
+
+[개인화 지시]
+가능하면 사용자의 평소 어투, 제목 패턴, 소제목 구성, 마무리 문구 스타일을 반영해줘. 아래 개인화 컨텍스트가 있으면 우선 참고하고, 없으면 일반적인 기술 블로그 톤으로 작성해줘.
+
+{personalization_block}
 
 [원본 텍스트]
 {processed_text}

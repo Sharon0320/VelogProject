@@ -7,6 +7,8 @@ from dotenv import load_dotenv
 from pdf_processor import PDFProcessor
 from blog_content_generator import BlogContentGenerator
 from velog_api import VelogAPI
+from vector_store import VectorStore, derive_user_id_from_cookie
+from embedding_service import EmbeddingService
 
 
 class VelogApp:
@@ -28,6 +30,8 @@ class VelogApp:
         self.pdf_processor = PDFProcessor(self.upstage_api_key)
         self.blog_generator = BlogContentGenerator(self.upstage_api_key)
         self.velog_api = VelogAPI(self.velog_api_url)
+        self.vector_store = VectorStore()
+        self.embedder = EmbeddingService()
         
         # 라우트 설정
         self._setup_routes()
@@ -38,6 +42,40 @@ class VelogApp:
         @self.app.route("/post", methods=["POST"])
         def post_from_pdf():
             return self._handle_pdf_posting()
+
+        @self.app.route("/sync-embeddings", methods=["POST"])
+        def sync_embeddings():
+            try:
+                if not self.vector_store.available():
+                    return jsonify({"error": "Vector DB unavailable"}), 503
+
+                payload = request.get_json(silent=True) or {}
+                velog_cookie = payload.get("velog_cookie", "")
+                user_id = derive_user_id_from_cookie(velog_cookie)
+                documents = payload.get("documents", [])  # [{post_id, content}]
+                contents = []
+                for doc in documents:
+                    post_id = str(doc.get("post_id", ""))
+                    content = str(doc.get("content", "")).strip()
+                    if content:
+                        contents.append((post_id, content))
+
+                # embed and upsert
+                if contents:
+                    embeddings = self.embedder.embed_texts([c[1] for c in contents])
+                    upserts = []
+                    for (post_id, content), emb in zip(contents, embeddings):
+                        upserts.append((post_id, content, emb))
+                    self.vector_store.upsert_documents(user_id, upserts)
+
+                return jsonify({
+                    "success": True,
+                    "message": "벡터 DB 동기화가 완료되었습니다.",
+                    "count": len(contents)
+                }), 200
+            except Exception as e:
+                print("임베딩 동기화 오류:", e)
+                return jsonify({"error": str(e)}), 500
     
     def _handle_pdf_posting(self):
         """PDF 포스팅 요청을 처리하는 메서드"""
@@ -65,9 +103,26 @@ class VelogApp:
             os.unlink(temp_pdf_path)
             print("임시 파일 삭제 완료.")
 
-            # 블로그 콘텐츠 생성
+            # 블로그 개인화 컨텍스트 생성 (유사도 검색)
+            personalization_context = None
+            try:
+                if self.vector_store.available():
+                    query_emb = self.embedder.embed_single(processed_text)
+                    user_id = derive_user_id_from_cookie(velog_cookie)
+                    neighbors = self.vector_store.similarity_search(user_id, query_emb, k=5)
+                    # 상위 문서 일부를 이어붙여 컨텍스트 구성
+                    if neighbors:
+                        joined = "\n\n".join([c[:600] for c, _ in neighbors])
+                        personalization_context = joined[:4000]
+            except Exception as _:
+                personalization_context = None
+
+            # 블로그 콘텐츠 생성 (개인화 컨텍스트 포함)
             print("\n=== 블로그 콘텐츠 생성 시작 (Upstage Solar) ===")
-            title, summary, body_with_placeholders, tags = self.blog_generator.get_summary_title_body_tags(processed_text)
+            title, summary, body_with_placeholders, tags = self.blog_generator.get_summary_title_body_tags(
+                processed_text,
+                personalization_context=personalization_context,
+            )
             print("블로그 콘텐츠 생성 완료.")
 
             final_body = body_with_placeholders
