@@ -32,35 +32,47 @@ class VectorStore:
                 user=os.getenv("PGUSER", "velog"),
                 password=os.getenv("PGPASSWORD", "velog")
             )
-            register_vector(self.conn)
             self.conn.autocommit = True
-        except Exception:
+            print("✅ PostgreSQL 연결 성공")
+        except Exception as e:
+            print(f"❌ PostgreSQL 연결 실패: {e}")
             self.conn = None
 
     def _ensure_schema(self) -> None:
         if not self.conn:
             return
-        with self.conn.cursor() as cur:
-            cur.execute("CREATE EXTENSION IF NOT EXISTS vector;")
-            cur.execute(
-                """
-                CREATE TABLE IF NOT EXISTS user_embeddings (
-                  id BIGSERIAL PRIMARY KEY,
-                  user_id TEXT NOT NULL,
-                  post_id TEXT,
-                  content TEXT NOT NULL,
-                  embedding VECTOR(%s) NOT NULL,
-                  created_at TIMESTAMP DEFAULT NOW()
-                );
-                """,
-                (EMBEDDING_DIM,),
-            )
-            cur.execute(
-                "CREATE INDEX IF NOT EXISTS idx_user_embeddings_user_id ON user_embeddings(user_id);"
-            )
-            cur.execute(
-                "CREATE INDEX IF NOT EXISTS idx_user_embeddings_embedding ON user_embeddings USING ivfflat (embedding vector_cosine_ops);"
-            )
+        try:
+            with self.conn.cursor() as cur:
+                cur.execute("CREATE EXTENSION IF NOT EXISTS vector;")
+                print("✅ pgvector 확장 생성 완료")
+                
+                # 확장 생성 후 register_vector 호출
+                register_vector(self.conn)
+                print("✅ pgvector 타입 등록 완료")
+                
+                cur.execute(
+                    """
+                    CREATE TABLE IF NOT EXISTS user_embeddings (
+                      id BIGSERIAL PRIMARY KEY,
+                      user_id TEXT NOT NULL,
+                      post_id TEXT,
+                      content TEXT NOT NULL,
+                      embedding VECTOR(%s) NOT NULL,
+                      created_at TIMESTAMP DEFAULT NOW()
+                    );
+                    """,
+                    (EMBEDDING_DIM,),
+                )
+                cur.execute(
+                    "CREATE INDEX IF NOT EXISTS idx_user_embeddings_user_id ON user_embeddings(user_id);"
+                )
+                cur.execute(
+                    "CREATE INDEX IF NOT EXISTS idx_user_embeddings_embedding ON user_embeddings USING ivfflat (embedding vector_cosine_ops);"
+                )
+                print("✅ 테이블 및 인덱스 생성 완료")
+        except Exception as e:
+            print(f"❌ 스키마 생성 실패: {e}")
+            self.conn = None
 
     def available(self) -> bool:
         return self.conn is not None
